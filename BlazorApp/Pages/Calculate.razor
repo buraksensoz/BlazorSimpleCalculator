@@ -1,0 +1,87 @@
+﻿@page "/calculate"
+@using System.Data
+
+
+
+
+
+<div class="container" style="width:200px">
+    <div class="row">
+        <div class="col-md-12 p-1">
+            <input type="text" @bind="@calcinput" style="width:100%"  /></div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(7)" >7</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(8)" >8</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(9)" >9</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-primary" style="width:100%" @onclick='() => AddCalcProcess("/")' >/</btn></div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(4)" >4</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(5)" >5</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(6)" >6</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-primary" style="width:100%" @onclick='() => AddCalcProcess("*")' >x</btn></div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(1)" >1</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(2)" >2</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(3)" >3</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-primary" style="width:100%" @onclick='() => AddCalcProcess("-")' >-</btn></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 p-1"><btn class="btn btn-info" style="width:100%" @onclick="() => AddCalcInput(0)" >0</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-primary" style="width:100%" @onclick='() => AddCalcProcess(".")' >.</btn></div>
+        <div class="col-md-3 p-1"><btn class="btn btn-primary" style="width:100%" @onclick='() => AddCalcProcess("+")' >+</btn></div>
+    </div>
+        <div class="row">
+        <div class="col-md-6 p-1"><btn class="btn btn-success" style="width:100%" @onclick="() => ExecProcess()" >Exec</btn></div>
+        <div class="col-md-6 p-1"><btn class="btn btn-danger" style="width:100%" @onclick="() => DeleteLastChar()" >Del </btn></div>
+    </div>
+</div>
+
+
+
+@code {
+
+    private string calcinput = "";
+
+    private void AddCalcInput(int val)
+    {
+        if (calcinput == "Err") calcinput = "";
+        calcinput += ""+val;
+
+
+    }
+
+    private void AddCalcProcess(string val)
+    {
+        if (calcinput == "Err") calcinput = "";
+        string[] processchar = new string[5] { ".", "*", "/", "+", "-" };
+        string lastChar = calcinput.Substring(calcinput.Length - 1);
+        if (!processchar.Contains(lastChar))
+            calcinput += ""+val;
+    }
+    private void DeleteLastChar()
+    {
+        if (calcinput == "Err") calcinput = "";
+        if (!string.IsNullOrEmpty(calcinput))
+            calcinput = calcinput.Remove(calcinput.Length - 1);
+    }
+
+    private void ExecProcess()
+    {
+        if (!string.IsNullOrEmpty(calcinput)){
+            try
+            {
+                calcinput = new DataTable().Compute(calcinput, null).ToString();        
+            } catch{
+
+                calcinput = "Err";
+            }
+        
+
+        }
+    }
+
+}
